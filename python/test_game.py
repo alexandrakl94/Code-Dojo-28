@@ -1,17 +1,30 @@
 "A test suite for a Three Men's Morris game"
 
-import unittest
-
 class Game():
-    def thing(self):
-        return False
+    rows = 3
+    colums = 3
+    
+    def frame(self):
+        board =  ""
+        for i in range(0,self.rows):
+            if i == 0:
+                board += "\n"
+            elif i == 1:
+                board += "\n|\|/| \n"
+            else:
+                board += "\n|/|\| \n"
+
+            for j in range(0,self.colums):
+                if j == 0:
+                    board += "o"
+                else:
+                    board += "-o"    
+
+        return board
 
 
-class ThreeMensMorrisTests(unittest.TestCase):
-    def test_thing(self):
-        "test thing is True"
-        self.game = Game()
-        self.assertTrue(self.game.thing())
         
 if __name__ == "__main__":
-    unittest.main()
+    game=Game()
+    board = game.frame()
+    print(board)
