@@ -4,6 +4,9 @@ class Game():
     rows = 3
     colums = 3
     state = []
+    whiteCount = 3
+    blackCount = 3
+
     
     def frame(self):
         board =  ""
@@ -33,6 +36,15 @@ class Game():
         return board
 
 
+    def hasPieceLeft(self, isWhite):
+        if isWhite and self.whiteCount > 0:
+            return True
+        elif not isWhite and self.blackCount > 0:
+            return True
+        else:
+            return False
+
+
     def validateMove(self,x,y):
         for piece in self.state:
             if (piece[0] == x and piece[1] == y):
@@ -44,6 +56,11 @@ class Game():
     def place(self,x,y,isWhite):
         piece = (x,y,isWhite)
         self.state.append(piece)
+
+        if isWhite:
+            self.whiteCount -= 1
+        else:
+            self.blackCount -= 1
         
 if __name__ == "__main__":
     game=Game()
@@ -61,11 +78,16 @@ if __name__ == "__main__":
         x= int(text_white[0])-1
         y= int(text_white[2])-1
 
-        if (game.validateMove(x,y)):
-            game.place(x,y,isWhite)
+        if not game.hasPieceLeft(isWhite):
+            # Todo: Ask for origin and destination, validate move, update the game
+            movePiece = input("No moves left! Please select which piece to move!")
+            print("TODO")
         else:
-            print("Don't touch this!")
-            continue
+            if game.validateMove(x,y):
+                game.place(x,y,isWhite)
+            else:
+                print("Don't touch this!")
+                continue
 
         print(game.frame())
 
