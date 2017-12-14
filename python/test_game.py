@@ -32,6 +32,15 @@ class Game():
 
         return board
 
+
+    def validateMove(self,x,y):
+        for piece in self.state:
+            if (piece[0] == x and piece[1] == y):
+                return False
+
+        return True
+
+
     def place(self,x,y,isWhite):
         piece = (x,y,isWhite)
         self.state.append(piece)
@@ -52,7 +61,11 @@ if __name__ == "__main__":
         x= int(text_white[0])-1
         y= int(text_white[2])-1
 
-        game.place(x,y,isWhite)
+        if (game.validateMove(x,y)):
+            game.place(x,y,isWhite)
+        else:
+            print("Don't touch this!")
+            continue
 
         print(game.frame())
 
