@@ -20,7 +20,10 @@ class Game():
 
                 for piece in self.state:   
                     if piece[0]==i and piece[1]==j:
-                        thing = 'x'
+                        if piece[2]:
+                            thing = 'x'
+                        else:
+                            thing = '#'
 
                 if j == 0:
                     board += thing
@@ -29,8 +32,8 @@ class Game():
 
         return board
 
-    def place(self,x,y):
-        piece = (x,y)
+    def place(self,x,y,isWhite):
+        piece = (x,y,isWhite)
         self.state.append(piece)
         
 if __name__ == "__main__":
@@ -38,12 +41,19 @@ if __name__ == "__main__":
     board = game.frame()
     print(board)
 
-    for op in range(0,3):
+    isWhite = True
 
-        text_white = input("White player turn:")
+    while True:
+
+        currPlayer = "White" if isWhite else "Black"
+
+        text_white = input('{0} player turn:'.format(currPlayer))
 
         x= int(text_white[0])-1
         y= int(text_white[2])-1
-        game.place(x,y)
+
+        game.place(x,y,isWhite)
 
         print(game.frame())
+
+        isWhite = not isWhite
