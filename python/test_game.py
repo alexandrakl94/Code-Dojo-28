@@ -7,7 +7,25 @@ class Game():
     whiteCount = 3
     blackCount = 3
 
-    
+    def makeTuple(inputString):
+        x = int(inputString[0]) - 1
+        y = int(inputString[2]) - 1
+        return (x, y)
+
+    def movePiece(self, origin, destination):
+
+        for piece in self.state:
+            if piece.x == origin[0] and piece.y == origin[2]:
+                if piece.x_original == destination[0] and piece.y_original == destination[2]:
+                    print("Go away!")
+                    return False    
+                else:
+                    piece.x = destination[0]
+                    piece.y = destination[2]
+                    return True
+        print("oh something is wrong")
+        return False
+
     def frame(self):
         board =  ""
         for i in range(0, self.rows):
@@ -54,6 +72,7 @@ class Game():
 
     def doesPlayerOwn(self, isWhite, x, y):
       for piece in self.state:
+        print(piece, x, y, isWhite)  
         if (piece['x'] == x and piece['y'] == y and piece['isWhite'] == isWhite):
           return True
 
@@ -64,6 +83,8 @@ class Game():
         return { 
           "x": x,
           "y": y,
+          "x_original":x,
+          "y_original":y,
           "isWhite": isWhite 
         }
 
@@ -89,34 +110,39 @@ if __name__ == "__main__":
     while True:
 
         currPlayer = "White" if isWhite else "Black"
-
-        text_white = input('{0} player turn:'.format(currPlayer))
-
-        x = int(text_white[0]) - 1
-        y = int(text_white[2]) - 1
+        playerSymbol = "x" if isWhite else "#" 
 
         if not game.hasPieceLeft(isWhite):
             # Todo: Ask for origin and destination, validate move, update the game
 
             # The validation rules are: can't put your piece...
               # - You can only move your piece [DONE]
-              # - On another player's piece
-              # - On your piece's current location
-              # - Where your piece has previously been
+              # - On another player's piece [DONE]
+              # - On your piece's current location [DONE]
+              # - Where your piece has previously been [DONE]
+            # Bugfix
+              # - make strings into tuples for origin and destination
 
-            movePiece = input("No moves left! Please select which piece to move!")
+            origin = input("No moves left! Please select which piece to move!")
 
-            if game.doesPlayerOwn(currPlayer, movePiece[0], movePiece[2]):
+            if game.doesPlayerOwn(currPlayer, origin[0], origin[2]):
               destination = input("And now the destination location")
               
               if game.validateMove(destination[0], destination[2]):
-                print("Nice, we have validated the destination! ((:")
+                success = game.movePiece(origin, destination)
+
+                if not success:
+                    continue
 
             else:
-                print("")
+                print("you can't move it")
                 continue
               
         else:
+            text_white = input('{0} player turn ({1}):'.format(currPlayer, playerSymbol))
+
+            x = int(text_white[0]) - 1
+            y = int(text_white[2]) - 1
             if game.validateMove(x,y):
                 game.place(x, y, isWhite)
             else:
