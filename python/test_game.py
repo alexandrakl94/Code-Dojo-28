@@ -22,7 +22,9 @@ def test_should_return_a_valid_piece():
   # assert
   assert piece == { 
     "x": 1,
+    "x_original": 1,
     "y": 2,
+    "y_original": 2,
     "isWhite": True
   }
 
@@ -114,6 +116,3 @@ def test_has_piece_left_should_return_false_when_white_count_equals_0():
 
 
 # TODO: test the user input
-
-
-
