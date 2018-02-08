@@ -1,128 +1,119 @@
 "A test suite for a Three Men's Morris game"
 
-class Game():
-    rows = 3
-    colums = 3
-    state = []
-    whiteCount = 3
-    blackCount = 3
+from .game import Game
+  
 
-    
-    def frame(self):
-        board =  ""
-        for i in range(0, self.rows):
-            if i == 0:
-                board += "\n"
-            elif i == 1:
-                board += "\n|\|/| \n"
-            else:
-                board += "\n|/|\| \n"
+def test_new_game_starts_with_valid_default_values():
+  # act
+  my_game = Game()
 
-            for j in range(0, self.colums):
-                thing = "o"
-
-                for piece in self.state:   
-                    if piece['x'] == i and piece['y'] == j:
-                        if piece['isWhite']:
-                            thing = 'x'
-                        else:
-                            thing = '#'
-
-                if j == 0:
-                    board += thing
-                else:
-                    board += "-" + thing
-
-        return board
+  # assert
+  assert my_game.rows == 3
+  assert my_game.columns == 3
+  assert my_game.state == []
+  assert my_game.whiteCount == 3
+  assert my_game.blackCount == 3
 
 
-    def hasPieceLeft(self, isWhite):
-        if isWhite and self.whiteCount > 0:
-            return True
-        elif not isWhite and self.blackCount > 0:
-            return True
-        else:
-            return False
+def test_should_return_a_valid_piece():
+  # act
+  piece = Game.createPiece(x=1, y=2, isWhite=True)
+
+  # assert
+  assert piece == { 
+    "x": 1,
+    "y": 2,
+    "isWhite": True
+  }
 
 
-    def validateMove(self, x, y):
-        for piece in self.state:
-            if (piece['x'] == x and piece['y'] == y):
-                return False
+def test_place_should_append_an_item_to_the_state():
+  # arrange
+  my_game = Game()
+  
+  # act
+  my_game.place(x=2, y=1, isWhite=False)
 
-        return True
+  # assert
+  assert len(my_game.state) == 1
+  assert my_game.state[0]['x'] == 2
+  assert my_game.state[0]['y'] == 1
+  assert my_game.state[0]['isWhite'] == False
+  
 
-    def doesPlayerOwn(self, isWhite, x, y):
-      for piece in self.state:
-        if (piece['x'] == x and piece['y'] == y and piece['isWhite'] == isWhite):
-          return True
+def test_place_should_decrement_white_count():
+  # arrange
+  my_game = Game()
+  
+  # act
+  my_game.place(x=2, y=1, isWhite=True)
 
-      return False
+  # assert
+  assert my_game.whiteCount == 2
+  assert my_game.blackCount == 3
+  
+
+def test_place_should_decrement_black_count():
+  # arrange
+  my_game = Game()
+  
+  # act
+  my_game.place(x=2, y=1, isWhite=False)
+
+  # assert
+  assert my_game.blackCount == 2
+  assert my_game.whiteCount == 3
+  
+
+def test_has_piece_left_should_return_true_when_white_count_above_0():
+  # arrange
+  my_game = Game()
+  my_game.whiteCount = 2
+  
+  # act
+  hasPiece = my_game.hasPieceLeft(isWhite=True)
+
+  # assert
+  assert hasPiece == True
+  
+
+def test_has_piece_left_should_return_true_when_black_count_above_0():
+  # arrange
+  my_game = Game()
+  my_game.blackCount = 2
+  
+  # act
+  hasPiece = my_game.hasPieceLeft(isWhite=False)
+
+  # assert
+  assert hasPiece == True
+  
+
+def test_has_piece_left_should_return_false_when_black_count_equals_0():
+  # arrange
+  my_game = Game()
+  my_game.blackCount = 0
+  
+  # act
+  hasPiece = my_game.hasPieceLeft(isWhite=False)
+
+  # assert
+  assert hasPiece == False
+  
+
+def test_has_piece_left_should_return_false_when_white_count_equals_0():
+  # arrange
+  my_game = Game()
+  my_game.whiteCount = 0
+  
+  # act
+  hasPiece = my_game.hasPieceLeft(isWhite=True)
+
+  # assert
+  assert hasPiece == False
 
 
-    def createPiece(x, y, isWhite):
-        return { 
-          "x": x,
-          "y": y,
-          "isWhite": isWhite 
-        }
-
-
-    def place(self, x, y, isWhite):
-        piece = Game.createPiece(x, y, isWhite)
-        self.state.append(piece)
-
-        if isWhite:
-            self.whiteCount -= 1
-        else:
-            self.blackCount -= 1
+# TODO: test the user input
 
 
 
-if __name__ == "__main__":
-    game=Game()
-    board = game.frame()
-    print(board)
-
-    isWhite = True
-
-    while True:
-
-        currPlayer = "White" if isWhite else "Black"
-
-        text_white = input('{0} player turn:'.format(currPlayer))
-
-        x = int(text_white[0]) - 1
-        y = int(text_white[2]) - 1
-
-        if not game.hasPieceLeft(isWhite):
-            # Todo: Ask for origin and destination, validate move, update the game
-
-            # The validation rules are: can't put your piece...
-              # - You can only move your piece [DONE]
-              # - On another player's piece
-              # - On your piece's current location
-              # - Where your piece has previously been
-
-            movePiece = input("No moves left! Please select which piece to move!")
-
-            if game.doesPlayerOwn(currPlayer, movePiece[0], movePiece[2]):
-              destination = input("And now the destination location")
-              
-              if game.validateMove(destination[0], destination[2]):
-                print("Nice, we have validated the destination! ((:")
-
-            else:
-                print("")
-                continue
-              
-        else:
-            if game.validateMove(x,y):
-                game.place(x, y, isWhite)
-            else:
-                print("Don't touch this!")
-                continue
-
-        print(game.frame())
-
-        isWhite = not isWhite
