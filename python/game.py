@@ -5,7 +5,7 @@ class Game():
     whiteCount = 3
     blackCount = 3
 
-    def makeTuple(inputString):
+    def makeTuple(self,inputString):
         x = int(inputString[0]) - 1
         y = int(inputString[2]) - 1
         return (x, y)
@@ -77,7 +77,7 @@ class Game():
       return False
 
 
-    def createPiece(x, y, isWhite):
+    def createPiece(self,x, y, isWhite):
         return { 
           "x": x,
           "y": y,
