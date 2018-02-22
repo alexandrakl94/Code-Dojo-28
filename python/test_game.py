@@ -1,6 +1,7 @@
 "A test suite for a Three Men's Morris game"
-
-from .game import Game
+import game
+from game import Game
+import mock
   
 
 def test_new_game_starts_with_valid_default_values():
@@ -18,7 +19,7 @@ def test_new_game_starts_with_valid_default_values():
 def test_should_return_a_valid_piece():
   # act
   piece = Game.createPiece(x=1, y=2, isWhite=True)
-
+ 
   # assert
   assert piece == { 
     "x": 1,
@@ -116,3 +117,16 @@ def test_has_piece_left_should_return_false_when_white_count_equals_0():
 
 
 # TODO: test the user input
+
+def test_start_should_read_user_input():
+      
+  # arrange
+  my_game = Game()
+  
+  # act
+  with mock.patch.object(my_game, 'start',
+                        wraps=my_game.start) as monkey:
+         my_game.start()
+         monkey.assert_called()
+
+      

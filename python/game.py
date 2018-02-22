@@ -5,7 +5,62 @@ class Game():
     whiteCount = 3
     blackCount = 3
 
-    def makeTuple(self,inputString):
+    def start(self):
+        
+        board = self.frame()
+        print(board)
+
+        isWhite = True
+
+        while True:
+
+            currPlayer = "White" if isWhite else "Black"
+            playerSymbol = "x" if isWhite else "#" 
+
+            if not self.hasPieceLeft(isWhite):
+                # Todo: Ask for origin and destination, validate move, update the game
+
+                # The validation rules are: can't put your piece...
+                # - You can only move your piece [DONE]
+                # - On another player's piece [DONE]
+                # - On your piece's current location [DONE]
+                # - Where your piece has previously been [DONE]
+                # Bugfix
+                # - make strings into tuples for origin and destination
+
+                origin = input("No moves left! Please select which piece to move!")
+
+                if self.doesPlayerOwn(currPlayer, origin[0], origin[2]):
+                    destination = input("And now the destination location")
+                
+                if self.validateMove(destination[0], destination[2]):
+                    success = self.movePiece(origin, destination)
+
+                    if not success:
+                        continue
+
+                else:
+                    print("you can't move it")
+                    continue
+                
+            else:
+                text_white = input('{0} player turn ({1}):'.format(currPlayer, playerSymbol))
+
+                x = int(text_white[0]) - 1
+                y = int(text_white[2]) - 1
+                if self.validateMove(x,y):
+                    self.place(x, y, isWhite)
+                else:
+                    print("Don't touch this!")
+                    continue
+
+            print(self.frame())
+
+            isWhite = not isWhite
+        
+    @classmethod
+    def makeTuple(cls,inputString):
+        
         x = int(inputString[0]) - 1
         y = int(inputString[2]) - 1
         return (x, y)
@@ -76,8 +131,8 @@ class Game():
 
       return False
 
-
-    def createPiece(self,x, y, isWhite):
+    @classmethod
+    def createPiece(cls, x, y, isWhite):
         return { 
           "x": x,
           "y": y,
@@ -88,7 +143,7 @@ class Game():
 
 
     def place(self, x, y, isWhite):
-        piece = Game.createPiece(x, y, isWhite)
+        piece = Game.createPiece(x, y, isWhite = True)
         self.state.append(piece)
 
         if isWhite:
@@ -97,56 +152,10 @@ class Game():
             self.blackCount -= 1
 
 
-
+    
+        
+        
 if __name__ == "__main__":
     game=Game()
-    board = game.frame()
-    print(board)
-
-    isWhite = True
-
-    while True:
-
-        currPlayer = "White" if isWhite else "Black"
-        playerSymbol = "x" if isWhite else "#" 
-
-        if not game.hasPieceLeft(isWhite):
-            # Todo: Ask for origin and destination, validate move, update the game
-
-            # The validation rules are: can't put your piece...
-              # - You can only move your piece [DONE]
-              # - On another player's piece [DONE]
-              # - On your piece's current location [DONE]
-              # - Where your piece has previously been [DONE]
-            # Bugfix
-              # - make strings into tuples for origin and destination
-
-            origin = input("No moves left! Please select which piece to move!")
-
-            if game.doesPlayerOwn(currPlayer, origin[0], origin[2]):
-              destination = input("And now the destination location")
-              
-              if game.validateMove(destination[0], destination[2]):
-                success = game.movePiece(origin, destination)
-
-                if not success:
-                    continue
-
-            else:
-                print("you can't move it")
-                continue
-              
-        else:
-            text_white = input('{0} player turn ({1}):'.format(currPlayer, playerSymbol))
-
-            x = int(text_white[0]) - 1
-            y = int(text_white[2]) - 1
-            if game.validateMove(x,y):
-                game.place(x, y, isWhite)
-            else:
-                print("Don't touch this!")
-                continue
-
-        print(game.frame())
-
-        isWhite = not isWhite
+    game.start()
+    
