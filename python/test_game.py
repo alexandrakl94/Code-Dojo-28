@@ -1,5 +1,5 @@
 "A test suite for a Three Men's Morris game"
-from game import Game
+from .game import Game
 import mock
 
 import unittest
@@ -117,22 +117,43 @@ def test_has_piece_left_should_return_false_when_white_count_equals_0():
   assert hasPiece == False
 
 
+def read_input(question):
+  print(question)
+
+  if question == 'White player turn (x):':
+      return '1 1'
+  elif question == 'Black player turn (#):':
+      return '1 2'
+  elif question == 'Do you want to continue? (Y/n)':
+      return 'n'
+  else:
+    return ''
+
+
 # TODO: change code to make sure we can exit a loop
 # 1. ask user if he she wants to exit
  
 class TestNotMockedFunction(unittest.TestCase):
-    
-    @mock.patch('builtins.input', return_value="1 1")
-    def test_start_should_read_user_input(self, input_mock):
-          
+    def test_should_stop_after_one_turn(self):
+        
         # arrange
-        my_game = Game()
+        my_game = Game(read_input)
 
         # act
         my_game.start()
 
         # assert
-        input_mock.assert_called()
+        assert len(my_game.state) == 2
+
+        assert my_game.state[0]['x'] == 0
+        assert my_game.state[0]['y'] == 0
+        assert my_game.state[0]['isWhite'] == True
+
+        assert my_game.state[1]['x'] == 0
+        assert my_game.state[1]['y'] == 1
+        assert my_game.state[1]['isWhite'] == False
+        
+        assert my_game.status == 'stopped'
 
 
 if __name__ == '__main__':

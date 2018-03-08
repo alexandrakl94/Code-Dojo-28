@@ -5,17 +5,22 @@ class Game():
     whiteCount = 3
     blackCount = 3
 
+    def __init__(self, read_input):
+        self.read_input = read_input
+
     def start(self):
-        
+        self.status = 'starting'
         board = self.frame()
         print(board)
 
         isWhite = True
+        playon = True
 
-        while True:
-
+        while playon:
+            self.status = 'running'
             currPlayer = "White" if isWhite else "Black"
             playerSymbol = "x" if isWhite else "#" 
+            isBlack = not isWhite
 
             if not self.hasPieceLeft(isWhite):
                 # Todo: Ask for origin and destination, validate move, update the game
@@ -28,10 +33,10 @@ class Game():
                 # Bugfix
                 # - make strings into tuples for origin and destination
 
-                origin = input("No moves left! Please select which piece to move!")
+                origin = self.read_input("No moves left! Please select which piece to move!")
 
                 if self.doesPlayerOwn(currPlayer, origin[0], origin[2]):
-                    destination = input("And now the destination location")
+                    destination = self.read_input("And now the destination location")
                 
                 if self.validateMove(destination[0], destination[2]):
                     success = self.movePiece(origin, destination)
@@ -44,10 +49,11 @@ class Game():
                     continue
                 
             else:
-                text_white = input('{0} player turn ({1}):'.format(currPlayer, playerSymbol))
+                text_white = self.read_input('{0} player turn ({1}):'.format(currPlayer, playerSymbol))
 
                 x = int(text_white[0]) - 1
                 y = int(text_white[2]) - 1
+                
                 if self.validateMove(x,y):
                     self.place(x, y, isWhite)
                 else:
@@ -56,11 +62,16 @@ class Game():
 
             print(self.frame())
 
-            isWhite = not isWhite
+            if isBlack:
+                playon = False if self.read_input("Do you want to continue? (Y/n)") == 'n' else True
+
+            isWhite = isBlack
+
+
+        self.status = 'stopped'            
         
     @classmethod
-    def makeTuple(cls,inputString):
-        
+    def makeTuple(cls, inputString):
         x = int(inputString[0]) - 1
         y = int(inputString[2]) - 1
         return (x, y)
@@ -143,7 +154,7 @@ class Game():
 
 
     def place(self, x, y, isWhite):
-        piece = Game.createPiece(x, y, isWhite = True)
+        piece = Game.createPiece(x, y, isWhite)
         self.state.append(piece)
 
         if isWhite:
@@ -151,11 +162,8 @@ class Game():
         else:
             self.blackCount -= 1
 
-
-    
-        
-        
+            
 if __name__ == "__main__":
-    game=Game()
+    game=Game(input)
     game.start()
     
